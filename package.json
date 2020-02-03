@@ -1,0 +1,93 @@
+{
+  "name": "egg-ez-ws",
+  "version": "0.1.0",
+  "description": "easy websocket for egg.",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "typings/**/*.d.ts",
+    "bin/**/*.js",
+    "bin/**/*.d.ts",
+    "app/**/*.js",
+    "app/**/*.js",
+    "app/**/*.d.ts",
+    "config/**/*.js",
+    "config/**/*.d.ts",
+    "lib/**/*.js",
+    "lib/**/*.d.ts",
+    "app.js",
+    "app.d.ts",
+    "agent.js",
+    "agent.d.ts"
+  ],
+  "eggPlugin": {
+    "name": "ws",
+    "dependencies": [
+      "aop"
+    ]
+  },
+  "egg": {
+    "typescript": true
+  },
+  "bin": {},
+  "dependencies": {
+    "@ali/egg-typed": "^1.0.8",
+    "@types/ws": "^6.0.4",
+    "egg-aop": "^0.5.3",
+    "ws": "^7.2.0"
+  },
+  "devDependencies": {
+    "@types/mocha": "^5.2.7",
+    "@types/node": "^12.12.14",
+    "@types/supertest": "^2.0.8",
+    "autod": "^3.1.0",
+    "egg-bin": "^4.14.0",
+    "egg-ci": "^1.13.1",
+    "egg-mock": "^3.24.2",
+    "egg-ts-helper": "^1.25.6",
+    "egg": "^2.25.0",
+    "rimraf": "^3.0.0",
+    "supertest": "^4.0.2",
+    "tslint": "^5.20.1",
+    "typescript": "^3.7.2"
+  },
+  "engines": {
+    "node": ">=8.9.0"
+  },
+  "scripts": {
+    "clean:test": "rimraf test/fixtures/**/run/*.json",
+    "test": "npm run clean:test && npm run lint -- --fix && npm run test-local",
+    "test-local": "egg-bin test -r egg-ts-helper/register --full-trace",
+    "cov": "egg-bin cov -r egg-ts-helper/register",
+    "lint": "tslint .",
+    "ci": "npm run cov",
+    "autod": "autod",
+    "clean": "rimraf app/**/*.js lib/**/*.js app/**/*.d.ts lib/**/*.d.ts",
+    "ts": "npm run clean && tsc",
+    "debug": "tsc -w -p tsconfig.debug.json",
+    "prepublish": "npm run test && npm run ts",
+    "postpublish": "node scripts/published.js"
+  },
+  "ci": {
+    "version": "8"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zhang740/egg-ez-ws.git"
+  },
+  "eslintIgnore": [
+    "coverage"
+  ],
+  "keywords": [
+    "egg",
+    "egg-ez-ws",
+    "ts",
+    "websocket"
+  ],
+  "author": "zhang740",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/zhang740/egg-ez-ws/issues"
+  },
+  "homepage": "https://github.com/zhang740/egg-ez-ws#readme"
+}
