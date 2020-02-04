@@ -8,12 +8,14 @@ import {
   RoomExitHandler,
   RoomInfoHandler,
   RoomListHandler,
+  RoomMessageHandler,
 } from './lib/ClusterManager/Handlers/Room';
 import {
   ClientConnectHandler,
   ClientDisconnectHandler,
   ClientMessageHandler,
   ClientMergeInfoHandler,
+  ClientInfoHandler,
 } from './lib/ClusterManager/Handlers/Client';
 
 export default (agent: Agent) => {
@@ -28,8 +30,10 @@ export default (agent: Agent) => {
     clusterManager.registerEventHandler(RoomExitHandler);
     clusterManager.registerEventHandler(RoomInfoHandler);
     clusterManager.registerEventHandler(RoomListHandler);
+    clusterManager.registerEventHandler(RoomMessageHandler);
     clusterManager.registerEventHandler(ClientConnectHandler);
     clusterManager.registerEventHandler(ClientDisconnectHandler);
+    clusterManager.registerEventHandler(ClientInfoHandler);
     clusterManager.registerEventHandler(ClientMessageHandler);
     clusterManager.registerEventHandler(ClientMergeInfoHandler);
 

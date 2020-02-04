@@ -15,10 +15,7 @@ export class RoomInfoHandler extends BaseEventHandler<WORKER_TO_AGENT.RoomInfoRe
         id: evt.id,
         info: room.ext.info,
         clients: [...room.clients.values()].map(c => {
-          return {
-            id: c.id,
-            info: c.ext.info,
-          };
+          return c;
         }),
       },
       evt.id

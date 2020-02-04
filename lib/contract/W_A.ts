@@ -27,6 +27,11 @@ export class RoomInfoRequestEvent extends BaseEvent<{
   roomId: string;
 }> {}
 
+/** 客户端信息 */
+export class ClientInfoRequestEvent extends BaseEvent<{
+  clientId: string;
+}> {}
+
 /** 更新客户端信息 */
 export class MergeClientInfoEvent extends BaseEvent<{
   id: string;

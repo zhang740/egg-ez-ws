@@ -1,6 +1,8 @@
 // AGENT TO WORKER
 import { BaseEvent } from '../common/BaseEvent';
-import { IRoomInfo } from './interface';
+import { IRoomInfo, IClientInfo } from './interface';
+
+export class ClientInfoResponseEvent extends BaseEvent<IClientInfo> {}
 
 export class RoomInfoResponseEvent extends BaseEvent<IRoomInfo> {}
 

@@ -39,6 +39,10 @@ export class ClientManager extends BaseManager<Application> {
     this.clients.set(client.id, client);
     this.broadcast(new ClientConnectEvent({ id: client.id }));
 
+    const pingTimer = setInterval(() => {
+      ws.ping();
+    }, 30 * 1000);
+
     ws.onmessage = evt => {
       if (evt.type === 'message') {
         try {
@@ -73,6 +77,7 @@ export class ClientManager extends BaseManager<Application> {
     };
     ws.onclose = evt => {
       this.logger.info('[client] onclose', client.id);
+      clearInterval(pingTimer);
       this.clients.delete(client.id);
       this.onSendTo.emit(new ClientDisconnectEvent({ id: client.id }));
     };
