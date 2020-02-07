@@ -3,7 +3,7 @@ import * as uuid from 'uuid';
 import { application } from 'egg-aop';
 import { IRoomInfo, IClientInfo } from '../contract';
 import { BaseEventHandler } from './handlers/BaseEventHandler';
-import { BaseManager, BaseEvent } from '../common';
+import { BaseManager } from '../common';
 
 class RoomInfo {
   readonly id: string;
@@ -13,6 +13,8 @@ class RoomInfo {
     info: {},
     // 服务端数据
     data: {},
+    /** 创建时间 */
+    gmtCreated: Date.now(),
   };
   // TODO 同步
   readonly clients = new Map<string, ClientInfo>();
@@ -26,18 +28,22 @@ class RoomInfo {
 
 type ClientType = 'local' | 'remote';
 class ClientInfo {
-  // 是否为本地连接客户端
-  type: ClientType;
   // TODO 同步
   ext = {
     // 对外信息
     info: {},
     // 服务端数据
     data: {},
+    /** 创建时间 */
+    gmtCreated: Date.now(),
   };
   readonly rooms = new Map<string, RoomInfo>();
 
-  constructor(readonly id: string, type: ClientType = 'local') {}
+  constructor(
+    readonly id: string,
+    // 是否为本地连接客户端
+    public readonly type: ClientType = 'local'
+  ) {}
 }
 
 @application()
@@ -54,7 +60,9 @@ export class ClusterManager extends BaseManager<Agent> {
 
   async clientConnect(info: IClientInfo) {
     this.logger.debug('[cluster] client connect', info);
-    this.clients.set(info.id, new ClientInfo(info.id));
+    const client = new ClientInfo(info.id);
+    this.clients.set(info.id, client);
+    return client;
   }
 
   async clientDisconnect(info: IClientInfo) {
@@ -66,6 +74,7 @@ export class ClusterManager extends BaseManager<Agent> {
       );
       this.clients.delete(info.id);
     }
+    return client;
   }
 
   getClient(id: string) {
@@ -82,20 +91,33 @@ export class ClusterManager extends BaseManager<Agent> {
   }
 
   async createRoom(info: IRoomInfo) {
-    const hasRoom = this.rooms.has(info.id);
+    const hasRoom = await this.getRoom(info.id);
     if (!hasRoom) {
       this.logger.info('[cluster] create room', info);
       const room = new RoomInfo(info);
+      // TODO 同步
       this.rooms.set(room.id, room);
+    }
+  }
+
+  async deleteRoom(roomId: string) {
+    const room = await this.getRoom(roomId);
+    if (room) {
+      this.logger.info('[cluster] delete room', roomId);
+      [...room.clients.values()].forEach(client => {
+        // TODO 房间关闭通知
+      });
+      // TODO 同步
+      this.rooms.delete(roomId);
     }
   }
 
   async joinRoom(clientId: string, roomId: string) {
     const client = this.clients.get(clientId);
     if (!client) return false;
-    const room = this.rooms.get(roomId);
+    const room = await this.getRoom(roomId);
     if (!room) {
-      this.createRoom({ id: roomId });
+      await this.createRoom({ id: roomId });
       return this.joinRoom(clientId, roomId);
     }
     this.logger.info('[cluster] join room', clientId, roomId);
@@ -109,9 +131,12 @@ export class ClusterManager extends BaseManager<Agent> {
     if (client) {
       client.rooms.delete(roomId);
     }
-    const room = this.rooms.get(roomId);
+    const room = await this.getRoom(roomId);
     if (room) {
       room.clients.delete(clientId);
+      if (!room.clients.size) {
+        this.deleteRoom(room.id);
+      }
     }
   }
 }

@@ -10,6 +10,7 @@ import { ClientMessageHandler } from './lib/ClientManager/Handlers/ClientMessage
 import {
   RoomJoinCommandProcessor,
   RoomExitCommandProcessor,
+  RoomInfoCommandProcessor,
 } from './lib/ClientManager/Command/RoomCommand';
 
 export default (app: Application) => {
@@ -25,6 +26,7 @@ export default (app: Application) => {
     clientManager.registerCommandProcessor(MessageCommandProcessor);
     clientManager.registerCommandProcessor(RoomJoinCommandProcessor);
     clientManager.registerCommandProcessor(RoomExitCommandProcessor);
+    clientManager.registerCommandProcessor(RoomInfoCommandProcessor);
 
     clientManager.onSendTo.addHandler(evt => {
       app.messenger.sendToAgent(MESSAGE_EVENT, evt);

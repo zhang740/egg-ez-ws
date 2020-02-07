@@ -15,6 +15,7 @@ export class ClientInfoHandler extends BaseEventHandler<WORKER_TO_AGENT.ClientIn
         id: evt.id,
         info: client.ext.info,
         data: client.ext.data,
+        roomIds: [...client.rooms.values()].map(room => room.id),
       },
       evt.id
     );

@@ -14,9 +14,13 @@ export interface RoomCommandRequest {
 }
 export interface RoomCommandResponse {
   type: 'ROOM_JOIN' | 'ROOM_EXIT' | 'ROOM_INFO';
+  success: boolean;
   data: any;
 }
 export class RoomJoinCommandProcessor extends BaseCommandProcessor {
+  /** 是否将用户进入房间消息广播给其他用户 */
+  static BROADCAST_TO_OTHER_IN_ROOM = false;
+
   tester = 'ROOM_JOIN';
 
   async onMessage(client: Client, msg: RoomCommandRequest = {}): Promise<void> {
@@ -27,6 +31,7 @@ export class RoomJoinCommandProcessor extends BaseCommandProcessor {
 
     const response: RoomCommandResponse = {
       type: 'ROOM_JOIN',
+      success: true,
       data: clientInfo
         ? {
             clientId: clientInfo.data.id,
@@ -42,16 +47,22 @@ export class RoomJoinCommandProcessor extends BaseCommandProcessor {
       })
     );
 
-    this.manager.broadcast(new RoomMessageEvent({ roomId: msg.roomId, msg: response }));
+    if (RoomJoinCommandProcessor.BROADCAST_TO_OTHER_IN_ROOM) {
+      this.manager.broadcast(new RoomMessageEvent({ roomId: msg.roomId, msg: response }));
+    }
   }
 }
 
 export class RoomExitCommandProcessor extends BaseCommandProcessor {
+  /** 是否将用户进入房间消息广播给其他用户 */
+  static BROADCAST_TO_OTHER_IN_ROOM = false;
+
   tester = 'ROOM_EXIT';
 
   async onMessage(client: Client, msg: RoomCommandRequest = {}): Promise<void> {
     const response: RoomCommandResponse = {
       type: 'ROOM_EXIT',
+      success: true,
       data: {
         clientId: client.id,
       },
@@ -63,7 +74,10 @@ export class RoomExitCommandProcessor extends BaseCommandProcessor {
         roomId: msg.roomId,
       })
     );
-    client.sendMessage(response);
+
+    if (RoomExitCommandProcessor.BROADCAST_TO_OTHER_IN_ROOM) {
+      this.manager.broadcast(new RoomMessageEvent({ roomId: msg.roomId, msg: response }));
+    }
   }
 }
 
@@ -80,13 +94,14 @@ export class RoomInfoCommandProcessor extends BaseCommandProcessor {
 
     if (info) {
       info.data.clients = info.data.clients.map(c => ({ id: c.id, info: c.info }));
+
+      const response: RoomCommandResponse = {
+        type: 'ROOM_INFO',
+        success: true,
+        data: info.data,
+      };
+
+      client.sendMessage(response);
     }
-
-    const response: RoomCommandResponse = {
-      type: 'ROOM_INFO',
-      data: info,
-    };
-
-    client.sendMessage(response);
   }
 }

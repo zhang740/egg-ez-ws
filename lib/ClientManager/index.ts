@@ -4,14 +4,19 @@ import * as WebSocket from 'ws';
 import { Client, IMessage } from './Client';
 import { BaseCommandProcessor } from './Command';
 import { Application } from 'egg';
-import { ClientDisconnectEvent, ClientConnectEvent } from '../contract/W_A';
+import { ClientDisconnectEvent, ClientConnectEvent, ClientInfoRequestEvent } from '../contract/W_A';
 import { BaseEventHandler } from './Handlers/BaseEventHandler';
 import { ClientMessageEvent } from '../contract/Any';
 import { BaseEvent } from '../common';
-import { ClassType } from '../contract';
+import { ClassType, IClientInfo } from '../contract';
+import { EventDelegate } from '../util/EventDelegate';
+import { ClientInfoResponseEvent } from '../contract/A_W';
 
 @application()
 export class ClientManager extends BaseManager<Application> {
+  onClientConnect = new EventDelegate<Client>();
+  onClientDisconnect = new EventDelegate<IClientInfo>();
+
   readonly logger = this.app.getLogger('ClientManager');
 
   private commandProcessors: BaseCommandProcessor[] = [];
@@ -38,6 +43,7 @@ export class ClientManager extends BaseManager<Application> {
     const client = new Client(ws);
     this.clients.set(client.id, client);
     this.broadcast(new ClientConnectEvent({ id: client.id }));
+    this.onClientConnect.emit(client);
 
     const pingTimer = setInterval(() => {
       ws.ping();
@@ -75,11 +81,16 @@ export class ClientManager extends BaseManager<Application> {
     ws.onerror = evt => {
       this.logger.warn('[client] Err!', client.id, evt);
     };
-    ws.onclose = evt => {
+    ws.onclose = async evt => {
       this.logger.info('[client] onclose', client.id);
       clearInterval(pingTimer);
       this.clients.delete(client.id);
-      this.onSendTo.emit(new ClientDisconnectEvent({ id: client.id }));
+      const clientInfo = await this.broadcast(
+        new ClientDisconnectEvent({ id: client.id }),
+        ClientInfoResponseEvent
+      );
+      const data = clientInfo ? clientInfo.data : { id: client.id };
+      this.onClientDisconnect.emit(data);
     };
 
     return client;
@@ -101,6 +112,10 @@ export class ClientManager extends BaseManager<Application> {
 
   getClient(id: string) {
     return this.clients.get(id);
+  }
+
+  async getClientInfo(clientId: string) {
+    return this.broadcast(new ClientInfoRequestEvent({ clientId }), ClientInfoResponseEvent);
   }
 
   private formatMsg(msg: any): IMessage {

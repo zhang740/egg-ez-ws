@@ -1,5 +1,5 @@
 import { BaseEventHandler } from '../BaseEventHandler';
-import { WORKER_TO_AGENT } from '../../../contract';
+import { WORKER_TO_AGENT, IClientInfo } from '../../../contract';
 import { RoomInfoResponseEvent } from '../../../contract/A_W';
 
 export class RoomInfoHandler extends BaseEventHandler<WORKER_TO_AGENT.RoomInfoRequestEvent> {
@@ -15,7 +15,11 @@ export class RoomInfoHandler extends BaseEventHandler<WORKER_TO_AGENT.RoomInfoRe
         id: evt.id,
         info: room.ext.info,
         clients: [...room.clients.values()].map(c => {
-          return c;
+          return {
+            id: c.id,
+            info: c.ext.info,
+            data: c.ext.data,
+          } as IClientInfo;
         }),
       },
       evt.id

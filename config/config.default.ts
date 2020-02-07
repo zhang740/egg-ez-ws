@@ -1,7 +1,6 @@
 import * as path from 'path';
-import { Application } from 'egg';
 
-export default (app: Application) => {
+export default (app: any) => {
   return {
     ws: {
       authKey: 'egg-ez-ws!',
@@ -9,10 +8,10 @@ export default (app: Application) => {
     },
     customLogger: {
       ClusterManager: {
-        file: path.join(app.baseDir, `logs/${app.name}/bizlogger/ezws-cluster-manager.log`),
+        file: path.join(app.root, `logs/ez-ws/cluster-manager.log`),
       },
       ClientManager: {
-        file: path.join(app.baseDir, `logs/${app.name}/bizlogger/ezws-client-manager.log`),
+        file: path.join(app.root, `logs/ez-ws/client-manager.log`),
       },
     },
   };
