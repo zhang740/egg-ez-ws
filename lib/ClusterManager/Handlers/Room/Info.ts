@@ -12,7 +12,7 @@ export class RoomInfoHandler extends BaseEventHandler<WORKER_TO_AGENT.RoomInfoRe
     }
     return new RoomInfoResponseEvent(
       {
-        id: evt.id,
+        id: room.id,
         info: room.ext.info,
         data: room.ext.data,
         gmtCreated: room.ext.gmtCreated,

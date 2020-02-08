@@ -28,6 +28,7 @@ class RoomInfo {
 
 type ClientType = 'local' | 'remote';
 class ClientInfo {
+  readonly id: string;
   // TODO 同步
   ext = {
     // 对外信息
@@ -40,10 +41,14 @@ class ClientInfo {
   readonly rooms = new Map<string, RoomInfo>();
 
   constructor(
-    readonly id: string,
+    info: IClientInfo,
     // 是否为本地连接客户端
     public readonly type: ClientType = 'local'
-  ) {}
+  ) {
+    this.id = info.id || uuid.v4();
+    this.ext.info = info.info || {};
+    this.ext.data = info.data || {};
+  }
 }
 
 @application()
@@ -60,7 +65,7 @@ export class ClusterManager extends BaseManager<Agent> {
 
   async clientConnect(info: IClientInfo) {
     this.logger.debug('[cluster] client connect', info);
-    const client = new ClientInfo(info.id);
+    const client = new ClientInfo(info);
     this.clients.set(info.id, client);
     return client;
   }
