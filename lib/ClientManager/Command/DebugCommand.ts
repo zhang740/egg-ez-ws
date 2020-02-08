@@ -9,7 +9,10 @@ export interface DebugCommandRequest {
 }
 export interface DebugCommandResponse {
   type: 'DEBUG';
-  data: any;
+  data: {
+    req: DebugCommandRequest;
+    res?: any;
+  };
 }
 export class DebugCommandProcessor extends BaseCommandProcessor {
   tester = 'DEBUG';
@@ -18,7 +21,9 @@ export class DebugCommandProcessor extends BaseCommandProcessor {
     if (!client.isAdmin || !msg.cmd) return;
     const response: DebugCommandResponse = {
       type: 'DEBUG',
-      data: {},
+      data: {
+        req: msg,
+      },
     };
 
     switch (msg.cmd) {
@@ -27,7 +32,7 @@ export class DebugCommandProcessor extends BaseCommandProcessor {
           new RoomListRequestEvent({}),
           RoomListInfoResponseEvent
         );
-        response.data = roomIds && roomIds.data;
+        response.data.res = roomIds && roomIds.data;
         break;
 
       case 'RoomInfo':
@@ -38,7 +43,7 @@ export class DebugCommandProcessor extends BaseCommandProcessor {
           }),
           RoomInfoResponseEvent
         );
-        response.data = info && info.data;
+        response.data.res = info && info.data;
         break;
     }
     client.sendMessage(response);

@@ -3,6 +3,7 @@ export interface IClientInfo<T = any> {
   info?: Partial<T>;
   data?: Partial<T>;
   roomIds?: string[];
+  gmtCreated?: number;
 }
 
 export interface IRoomInfo<T = any> {
@@ -10,6 +11,7 @@ export interface IRoomInfo<T = any> {
   info?: Partial<T>;
   data?: Partial<T>;
   clients?: IClientInfo[];
+  gmtCreated?: number;
 }
 
 export type ClassType = new (...args: any) => any;
