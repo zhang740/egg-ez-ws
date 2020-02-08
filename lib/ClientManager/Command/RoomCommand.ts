@@ -93,12 +93,14 @@ export class RoomInfoCommandProcessor extends BaseCommandProcessor {
     );
 
     if (info) {
-      info.data.clients = info.data.clients.map(c => ({ id: c.id, info: c.info }));
-
       const response: RoomCommandResponse = {
         type: 'ROOM_INFO',
         success: true,
-        data: info.data,
+        data: {
+          id: info.data.id,
+          info: info.data.info,
+          clients: info.data.clients.map(c => ({ id: c.id, info: c.info })),
+        },
       };
 
       client.sendMessage(response);
