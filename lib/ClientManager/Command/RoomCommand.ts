@@ -1,5 +1,5 @@
 import { BaseCommandProcessor } from './BaseCommandProcessor';
-import { Client } from '../Client';
+import { Client, IMessage } from '../Client';
 import {
   JoinRoomEvent,
   ExitRoomEvent,
@@ -84,7 +84,7 @@ export class RoomExitCommandProcessor extends BaseCommandProcessor {
 export class RoomInfoCommandProcessor extends BaseCommandProcessor {
   tester = 'ROOM_INFO';
 
-  async onMessage(client: Client, msg: RoomCommandRequest = {}): Promise<void> {
+  async onMessage(client: Client, msg: RoomCommandRequest = {}, evt: IMessage): Promise<void> {
     const info = await this.manager.broadcast(
       new RoomInfoRequestEvent({
         roomId: msg.roomId,
@@ -103,7 +103,7 @@ export class RoomInfoCommandProcessor extends BaseCommandProcessor {
         },
       };
 
-      client.sendMessage(response);
+      client.sendMessage(response, evt.evtId);
     }
   }
 }

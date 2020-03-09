@@ -14,28 +14,28 @@ import {
 } from './lib/ClientManager/Command/RoomCommand';
 
 export default (app: Application) => {
+  const clientManager = getInstance(ClientManager, app, undefined);
+
+  // 注册默认事件处理器
+  clientManager.registerEventHandler(ClientMessageHandler);
+
+  // 注册默认命令处理器
+  clientManager.registerCommandProcessor(AuthCommandProcessor);
+  clientManager.registerCommandProcessor(DebugCommandProcessor);
+  clientManager.registerCommandProcessor(MessageCommandProcessor);
+  clientManager.registerCommandProcessor(RoomJoinCommandProcessor);
+  clientManager.registerCommandProcessor(RoomExitCommandProcessor);
+  clientManager.registerCommandProcessor(RoomInfoCommandProcessor);
+
+  clientManager.onSendTo.addHandler(evt => {
+    app.messenger.sendToAgent(MESSAGE_EVENT, evt);
+  });
+
+  app.messenger.on(MESSAGE_EVENT, evt => {
+    clientManager.eventProcess(evt);
+  });
+
   app.on('server', server => {
-    const clientManager = getInstance(ClientManager, app, undefined);
-
-    // 注册默认事件处理器
-    clientManager.registerEventHandler(ClientMessageHandler);
-
-    // 注册默认命令处理器
-    clientManager.registerCommandProcessor(AuthCommandProcessor);
-    clientManager.registerCommandProcessor(DebugCommandProcessor);
-    clientManager.registerCommandProcessor(MessageCommandProcessor);
-    clientManager.registerCommandProcessor(RoomJoinCommandProcessor);
-    clientManager.registerCommandProcessor(RoomExitCommandProcessor);
-    clientManager.registerCommandProcessor(RoomInfoCommandProcessor);
-
-    clientManager.onSendTo.addHandler(evt => {
-      app.messenger.sendToAgent(MESSAGE_EVENT, evt);
-    });
-
-    app.messenger.on(MESSAGE_EVENT, evt => {
-      clientManager.eventProcess(evt);
-    });
-
     const wss = new Server({ server: server });
     wss.on('connection', function(ws) {
       clientManager.createClient(ws);

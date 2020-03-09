@@ -1,5 +1,5 @@
 import { BaseCommandProcessor } from './BaseCommandProcessor';
-import { Client } from '../Client';
+import { Client, IMessage } from '../Client';
 import { MergeClientInfoEvent } from '../../contract/W_A';
 
 export interface AuthCommandRequest {
@@ -22,7 +22,7 @@ export class AuthCommandProcessor extends BaseCommandProcessor {
   private authKey = this.config.authKey;
   private adminKey = this.config.adminKey;
 
-  async onMessage(client: Client, msg: AuthCommandRequest = {}): Promise<void> {
+  async onMessage(client: Client, msg: AuthCommandRequest = {}, evt: IMessage): Promise<void> {
     const response: AuthCommandResponse = {
       type: 'AUTH',
       success: false,
@@ -47,6 +47,6 @@ export class AuthCommandProcessor extends BaseCommandProcessor {
       response.data.isAdmin = true;
     }
 
-    client.sendMessage(response);
+    client.sendMessage(response, evt.evtId);
   }
 }

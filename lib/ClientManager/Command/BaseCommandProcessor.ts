@@ -1,4 +1,4 @@
-import { Client } from '../Client';
+import { Client, IMessage } from '../Client';
 import { Application } from 'egg';
 import { ClientManager } from '..';
 
@@ -8,7 +8,7 @@ export abstract class BaseCommandProcessor {
   /** 是否需要鉴权 */
   readonly needAuth: boolean = true;
   /** 消息处理 */
-  abstract onMessage(client: Client, msg: any): Promise<void>;
+  abstract onMessage(client: Client, msg: any, evt: IMessage): Promise<void>;
 
   constructor(protected app: Application, protected manager: ClientManager) {}
 }

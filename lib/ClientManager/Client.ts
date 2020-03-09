@@ -6,6 +6,7 @@ import { BaseEvent } from '../common';
 export interface IMessage<T = any> {
   type: string;
   data: T;
+  evtId: string;
   timestamp: number;
 }
 
@@ -25,7 +26,7 @@ export class Client {
     );
   }
 
-  sendMessage(msg: { type: string; success?: boolean; data: any }) {
-    this.sendEvent(new ClientMessageEvent({ clientId: this.id, msg }));
+  sendMessage(msg: { type: string; success?: boolean; data: any }, evtId: string) {
+    this.sendEvent(new ClientMessageEvent({ clientId: this.id, msg, evtId }));
   }
 }

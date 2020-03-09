@@ -1,5 +1,5 @@
 import { BaseCommandProcessor } from './BaseCommandProcessor';
-import { Client } from '../Client';
+import { Client, IMessage } from '../Client';
 import { RoomListRequestEvent, RoomInfoRequestEvent } from '../../contract/W_A';
 import { RoomListInfoResponseEvent, RoomInfoResponseEvent } from '../../contract/A_W';
 
@@ -17,7 +17,7 @@ export interface DebugCommandResponse {
 export class DebugCommandProcessor extends BaseCommandProcessor {
   tester = 'DEBUG';
 
-  async onMessage(client: Client, msg: DebugCommandRequest = {}): Promise<void> {
+  async onMessage(client: Client, msg: DebugCommandRequest = {}, evt: IMessage): Promise<void> {
     if (!client.isAdmin || !msg.cmd) return;
     const response: DebugCommandResponse = {
       type: 'DEBUG',
@@ -46,6 +46,6 @@ export class DebugCommandProcessor extends BaseCommandProcessor {
         response.data.res = info && info.data;
         break;
     }
-    client.sendMessage(response);
+    client.sendMessage(response, evt.evtId);
   }
 }

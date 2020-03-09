@@ -70,7 +70,7 @@ export class ClientManager extends BaseManager<Application> {
             if (cp.needAuth && !client.isAuthorized) {
               this.logger.warn('[NoAuth]', client.id, msg);
             } else {
-              cp.onMessage(client, msg.data);
+              cp.onMessage(client, msg.data, msg);
             }
           });
         } catch (error) {
@@ -129,6 +129,7 @@ export class ClientManager extends BaseManager<Application> {
     return {
       type: data.type,
       data: data.data,
+      evtId: data.evtId,
       timestamp: Date.now(),
     };
   }
