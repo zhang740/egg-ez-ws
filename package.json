@@ -1,6 +1,6 @@
 {
   "name": "egg-ez-ws",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "easy websocket for egg.",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
