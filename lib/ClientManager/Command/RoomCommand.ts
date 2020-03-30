@@ -8,6 +8,7 @@ import {
   ClientInfoRequestEvent,
 } from '../../contract/W_A';
 import { RoomInfoResponseEvent, ClientInfoResponseEvent } from '../../contract/A_W';
+import { ClientMessageEvent } from '../../contract/Any';
 
 export interface RoomCommandRequest {
   roomId?: string;
@@ -47,6 +48,8 @@ export class RoomJoinCommandProcessor extends BaseCommandProcessor {
       })
     );
 
+    client.sendMessage(response, undefined);
+
     if (RoomJoinCommandProcessor.BROADCAST_TO_OTHER_IN_ROOM) {
       this.manager.broadcast(
         new RoomMessageEvent({
@@ -80,6 +83,8 @@ export class RoomExitCommandProcessor extends BaseCommandProcessor {
         roomId: msg.roomId,
       })
     );
+
+    client.sendMessage(response, undefined);
 
     if (RoomExitCommandProcessor.BROADCAST_TO_OTHER_IN_ROOM) {
       this.manager.broadcast(
