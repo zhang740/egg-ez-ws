@@ -27,6 +27,13 @@ export class Client {
   }
 
   sendMessage(msg: { type: string; success?: boolean; data: any }, evtId: string) {
-    this.sendEvent(new ClientMessageEvent({ clientId: this.id, msg, evtId }));
+    this.sendEvent(
+      new ClientMessageEvent({
+        fromId: this.id,
+        clientId: this.id,
+        msg,
+        evtId,
+      })
+    );
   }
 }

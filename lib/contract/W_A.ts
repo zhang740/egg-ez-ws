@@ -15,6 +15,7 @@ export class ExitRoomEvent extends BaseEvent<{ clientId: string; roomId: string 
 
 /** 房间消息 */
 export class RoomMessageEvent extends BaseEvent<{
+  fromId: string;
   roomId: string;
   msg: any;
 }> {}

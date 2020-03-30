@@ -48,7 +48,13 @@ export class RoomJoinCommandProcessor extends BaseCommandProcessor {
     );
 
     if (RoomJoinCommandProcessor.BROADCAST_TO_OTHER_IN_ROOM) {
-      this.manager.broadcast(new RoomMessageEvent({ roomId: msg.roomId, msg: response }));
+      this.manager.broadcast(
+        new RoomMessageEvent({
+          fromId: client.id,
+          roomId: msg.roomId,
+          msg: response,
+        })
+      );
     }
   }
 }
@@ -76,7 +82,13 @@ export class RoomExitCommandProcessor extends BaseCommandProcessor {
     );
 
     if (RoomExitCommandProcessor.BROADCAST_TO_OTHER_IN_ROOM) {
-      this.manager.broadcast(new RoomMessageEvent({ roomId: msg.roomId, msg: response }));
+      this.manager.broadcast(
+        new RoomMessageEvent({
+          fromId: client.id,
+          roomId: msg.roomId,
+          msg: response,
+        })
+      );
     }
   }
 }

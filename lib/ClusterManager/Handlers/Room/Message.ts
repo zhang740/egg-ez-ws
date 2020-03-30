@@ -11,8 +11,19 @@ export class RoomMessageHandler extends BaseEventHandler<RoomMessageEvent> {
       return;
     }
     room.clients.forEach(c => {
+      // 不发送给自己
+      if (c.id === evt.data.fromId) {
+        return;
+      }
       this.manager.eventProcess(
-        new ClientMessageEvent({ clientId: c.id, msg: evt.data.msg }, evt.id)
+        new ClientMessageEvent(
+          {
+            fromId: evt.data.fromId,
+            clientId: c.id,
+            msg: evt.data.msg,
+          },
+          evt.id
+        )
       );
     });
   }

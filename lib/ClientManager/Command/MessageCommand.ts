@@ -31,11 +31,23 @@ export class MessageCommandProcessor extends BaseCommandProcessor {
 
     switch (req.type) {
       case 'client':
-        this.manager.broadcast(new ClientMessageEvent({ clientId: req.toId, msg: response }));
+        this.manager.broadcast(
+          new ClientMessageEvent({
+            fromId: client.id,
+            clientId: req.toId,
+            msg: response,
+          })
+        );
         break;
 
       case 'room':
-        this.manager.broadcast(new RoomMessageEvent({ roomId: req.toId, msg: response }));
+        this.manager.broadcast(
+          new RoomMessageEvent({
+            fromId: client.id,
+            roomId: req.toId,
+            msg: response,
+          })
+        );
         break;
     }
   }
