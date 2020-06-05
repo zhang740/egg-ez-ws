@@ -12,7 +12,7 @@ export class ClientDisconnectHandler extends BaseEventHandler<
     if (client) {
       const newEvt = new ClientInfoResponseEvent(
         {
-          id: evt.id,
+          id: client.id,
           info: client.ext.info,
           data: client.ext.data,
           roomIds: [...client.rooms.values()].map(room => room.id),

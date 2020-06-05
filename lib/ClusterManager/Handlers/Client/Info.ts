@@ -12,7 +12,7 @@ export class ClientInfoHandler extends BaseEventHandler<WORKER_TO_AGENT.ClientIn
     }
     return new ClientInfoResponseEvent(
       {
-        id: evt.id,
+        id: client.id,
         info: client.ext.info,
         data: client.ext.data,
         gmtCreated: client.ext.gmtCreated,

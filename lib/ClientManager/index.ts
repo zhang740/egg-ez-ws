@@ -45,37 +45,52 @@ export class ClientManager extends BaseManager<Application> {
     this.broadcast(new ClientConnectEvent({ id: client.id }));
     this.onClientConnect.emit(client);
 
+    let failCount = 0;
     const pingTimer = setInterval(() => {
-      ws.ping();
+      ws.ping(undefined, undefined, err => {
+        if (err) {
+          failCount++;
+          this.logger.warn(client.id, 'ping fail!', failCount, err);
+          if (failCount >= 2) {
+            ws.close();
+          }
+        } else {
+          failCount = 0;
+        }
+      });
     }, 30 * 1000);
 
     ws.onmessage = evt => {
-      if (evt.type === 'message') {
-        try {
-          const msg = this.formatMsg(evt.data);
-          this.logger.info(
-            '[client] ws onmessage',
-            msg.type,
-            client.id,
-            `isAuthorized: ${client.isAuthorized}`,
-            `isAdmin: ${client.isAdmin}`
-          );
-          const processors = this.commandProcessors.filter(cp => {
-            return typeof cp.tester === 'string' ? cp.tester === msg.type : cp.tester(msg.type);
-          });
-          if (!processors.length) {
-            this.logger.warn('[client] NotFound Command Processor', client.id, msg);
-          }
-          processors.forEach(cp => {
-            if (cp.needAuth && !client.isAuthorized) {
-              this.logger.warn('[NoAuth]', client.id, msg);
-            } else {
-              cp.onMessage(client, msg.data, msg);
-            }
-          });
-        } catch (error) {
-          this.logger.warn('[client] ws onmessage Err!', client.id, evt.data, error);
+      if (!evt || evt.type !== 'message') {
+        return;
+      }
+      try {
+        const msg = this.formatMsg(evt.data);
+        if (!msg) {
+          return;
         }
+        this.logger.debug(
+          '[client] ws onmessage',
+          msg.type,
+          client.id,
+          `isAuthorized: ${client.isAuthorized}`,
+          `isAdmin: ${client.isAdmin}`
+        );
+        const processors = this.commandProcessors.filter(cp => {
+          return typeof cp.tester === 'string' ? cp.tester === msg.type : cp.tester(msg.type);
+        });
+        if (!processors.length) {
+          this.logger.warn('[client] NotFound Command Processor', client.id, msg);
+        }
+        processors.forEach(cp => {
+          if (cp.needAuth && !client.isAuthorized) {
+            this.logger.warn('[NoAuth]', client.id, msg);
+          } else {
+            cp.onMessage(client, msg.data, msg);
+          }
+        });
+      } catch (error) {
+        this.logger.warn('[client] ws onmessage Err!', client.id, evt.data, error);
       }
     };
     ws.onerror = evt => {
@@ -101,7 +116,7 @@ export class ClientManager extends BaseManager<Application> {
     evt: BaseEvent,
     cbType?: T
   ): Promise<InstanceType<T> | void> {
-    this.logger.info('[client] broadcast', evt);
+    this.logger.debug('[client] broadcast', evt.type);
     // Worker 内尝试直接分发，找不到则直接抛出
     if (!cbType && evt instanceof ClientMessageEvent) {
       this.eventProcess(evt);

@@ -8,7 +8,6 @@ import {
   ClientInfoRequestEvent,
 } from '../../contract/W_A';
 import { RoomInfoResponseEvent, ClientInfoResponseEvent } from '../../contract/A_W';
-import { ClientMessageEvent } from '../../contract/Any';
 
 export interface RoomCommandRequest {
   roomId?: string;
@@ -35,7 +34,7 @@ export class RoomJoinCommandProcessor extends BaseCommandProcessor {
       success: true,
       data: clientInfo
         ? {
-            clientId: clientInfo.data.id,
+            clientId: client.id,
             info: clientInfo.data.info,
           }
         : {},
