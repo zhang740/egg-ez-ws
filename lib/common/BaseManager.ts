@@ -29,9 +29,11 @@ export abstract class BaseManager<T extends EggApplication = EggApplication> {
           this.logger.warn(
             `[${this.type}] callback event is timeout! evt: ${evt.type} cbType: ${cbType.name}.`
           );
+          this.cbHandlers.delete(evt.id);
           r();
         }, CALLBACK_TIMEOUT_MS);
         this.cbHandlers.set(evt.id, cbEvt => {
+          this.cbHandlers.delete(evt.id);
           if (cbEvt.type !== cbType.name) {
             this.logger.error(
               `[${this.type}] callback event type is correct! e: ${cbType.name} a: ${cbEvt.type}.`
