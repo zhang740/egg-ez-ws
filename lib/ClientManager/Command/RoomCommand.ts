@@ -23,7 +23,7 @@ export class RoomJoinCommandProcessor extends BaseCommandProcessor {
 
   tester = 'ROOM_JOIN';
 
-  async onMessage(client: Client, msg: RoomCommandRequest = {}): Promise<void> {
+  async onMessage(client: Client, msg: RoomCommandRequest = {}, evt: IMessage): Promise<void> {
     const clientInfo = await this.manager.broadcast(
       new ClientInfoRequestEvent({ clientId: client.id }),
       ClientInfoResponseEvent
@@ -47,7 +47,7 @@ export class RoomJoinCommandProcessor extends BaseCommandProcessor {
       })
     );
 
-    client.sendMessage(response, undefined);
+    client.sendMessage(response, evt.evtId);
 
     if (RoomJoinCommandProcessor.BROADCAST_TO_OTHER_IN_ROOM) {
       this.manager.broadcast(
@@ -67,7 +67,7 @@ export class RoomExitCommandProcessor extends BaseCommandProcessor {
 
   tester = 'ROOM_EXIT';
 
-  async onMessage(client: Client, msg: RoomCommandRequest = {}): Promise<void> {
+  async onMessage(client: Client, msg: RoomCommandRequest = {}, evt: IMessage): Promise<void> {
     const response: RoomCommandResponse = {
       type: 'ROOM_EXIT',
       success: true,
@@ -83,7 +83,7 @@ export class RoomExitCommandProcessor extends BaseCommandProcessor {
       })
     );
 
-    client.sendMessage(response, undefined);
+    client.sendMessage(response, evt.evtId);
 
     if (RoomExitCommandProcessor.BROADCAST_TO_OTHER_IN_ROOM) {
       this.manager.broadcast(
@@ -108,18 +108,24 @@ export class RoomInfoCommandProcessor extends BaseCommandProcessor {
       RoomInfoResponseEvent
     );
 
-    if (info) {
-      const response: RoomCommandResponse = {
-        type: 'ROOM_INFO',
-        success: true,
-        data: {
-          id: info.data.id,
-          info: info.data.info,
-          clients: info.data.clients.map(c => ({ id: c.id, info: c.info })),
-        },
-      };
-
-      client.sendMessage(response, evt.evtId);
+    if (!info) {
+      return;
     }
+
+    if (!client.isAdmin && (info.data.clients || []).every(c => c.id !== client.id)) {
+      return;
+    }
+
+    const response: RoomCommandResponse = {
+      type: 'ROOM_INFO',
+      success: true,
+      data: {
+        id: info.data.id,
+        info: info.data.info,
+        clients: info.data.clients.map(c => ({ id: c.id, info: c.info })),
+      },
+    };
+
+    client.sendMessage(response, evt.evtId);
   }
 }

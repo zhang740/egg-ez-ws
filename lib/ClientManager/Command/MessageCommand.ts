@@ -1,5 +1,5 @@
 import { BaseCommandProcessor } from './BaseCommandProcessor';
-import { Client } from '../Client';
+import { Client, IMessage } from '../Client';
 import { ClientMessageEvent } from '../../contract/Any';
 import { RoomMessageEvent } from '../../contract/W_A';
 
@@ -18,7 +18,7 @@ export interface MessageCommandResponse {
 export class MessageCommandProcessor extends BaseCommandProcessor {
   tester = 'MESSAGE';
 
-  async onMessage(client: Client, req: MessageCommandRequest = {}): Promise<void> {
+  async onMessage(client: Client, req: MessageCommandRequest = {}, evt: IMessage): Promise<void> {
     if (!req.type || !req.toId) return;
 
     const response: MessageCommandResponse = {

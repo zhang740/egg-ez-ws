@@ -47,7 +47,7 @@ export class ClientManager extends BaseManager<Application> {
 
     let failCount = 0;
     const pingTimer = setInterval(() => {
-      ws.ping(undefined, undefined, err => {
+      ws.ping('', undefined, err => {
         if (err) {
           failCount++;
           this.logger.warn(client.id, 'ping fail!', failCount, err);
