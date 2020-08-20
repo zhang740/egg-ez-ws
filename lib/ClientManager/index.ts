@@ -19,6 +19,17 @@ export class ClientManager extends BaseManager<Application> {
 
   readonly logger = this.app.getLogger('ClientManager');
 
+  readonly checkHeart = setInterval(() => {
+    [...this.clients.values()].forEach(client =>
+      client.ws.ping('', undefined, err => {
+        if (err) {
+          this.logger.warn(client.id, 'ping fail!', err);
+          client.ws.close();
+        }
+      })
+    );
+  }, 30 * 1000);
+
   private commandProcessors: BaseCommandProcessor[] = [];
   private clients: Map<string, Client> = new Map();
 
@@ -44,21 +55,6 @@ export class ClientManager extends BaseManager<Application> {
     this.clients.set(client.id, client);
     this.broadcast(new ClientConnectEvent({ id: client.id }));
     this.onClientConnect.emit(client);
-
-    let failCount = 0;
-    const pingTimer = setInterval(() => {
-      ws.ping('', undefined, err => {
-        if (err) {
-          failCount++;
-          this.logger.warn(client.id, 'ping fail!', failCount, err);
-          if (failCount >= 2) {
-            ws.close();
-          }
-        } else {
-          failCount = 0;
-        }
-      });
-    }, 30 * 1000);
 
     ws.onmessage = evt => {
       if (!evt || evt.type !== 'message') {
@@ -98,7 +94,6 @@ export class ClientManager extends BaseManager<Application> {
     };
     ws.onclose = async evt => {
       this.logger.info('[client] onclose', client.id);
-      clearInterval(pingTimer);
       this.clients.delete(client.id);
       const clientInfo = await this.broadcast(
         new ClientDisconnectEvent({ id: client.id }),
