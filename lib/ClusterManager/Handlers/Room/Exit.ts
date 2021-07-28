@@ -5,6 +5,6 @@ export class RoomExitHandler extends BaseEventHandler<WORKER_TO_AGENT.ExitRoomEv
   eventType = WORKER_TO_AGENT.ExitRoomEvent;
 
   async processor(evt: WORKER_TO_AGENT.ExitRoomEvent): Promise<void> {
-    this.manager.exitRoom(evt.data.clientId, evt.data.roomId);
+    await this.manager.exitRoom(evt.data.clientId, evt.data.roomId);
   }
 }

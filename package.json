@@ -1,6 +1,6 @@
 {
   "name": "egg-ez-ws",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "easy websocket for egg.",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
@@ -49,7 +49,7 @@
     "rimraf": "^3.0.0",
     "supertest": "^4.0.2",
     "tslint": "^5.20.1",
-    "typescript": "^3.7.2"
+    "typescript": "^4.3.5"
   },
   "engines": {
     "node": ">=8.9.0"

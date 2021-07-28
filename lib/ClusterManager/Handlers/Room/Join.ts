@@ -5,6 +5,6 @@ export class RoomJoinHandler extends BaseEventHandler<WORKER_TO_AGENT.JoinRoomEv
   eventType = WORKER_TO_AGENT.JoinRoomEvent;
 
   async processor(evt: WORKER_TO_AGENT.JoinRoomEvent): Promise<void> {
-    this.manager.joinRoom(evt.data.clientId, evt.data.roomId);
+    await this.manager.joinRoom(evt.data.clientId, evt.data.roomId);
   }
 }

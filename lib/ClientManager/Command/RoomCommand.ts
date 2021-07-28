@@ -40,7 +40,7 @@ export class RoomJoinCommandProcessor extends BaseCommandProcessor {
         : {},
     };
 
-    this.manager.broadcast(
+    await this.manager.broadcast(
       new JoinRoomEvent({
         clientId: client.id,
         roomId: msg.roomId,
@@ -76,7 +76,7 @@ export class RoomExitCommandProcessor extends BaseCommandProcessor {
       },
     };
 
-    this.manager.broadcast(
+    await this.manager.broadcast(
       new ExitRoomEvent({
         clientId: client.id,
         roomId: msg.roomId,

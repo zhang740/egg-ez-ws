@@ -117,7 +117,7 @@ export class ClusterManager extends BaseManager<Agent> {
     }
   }
 
-  async joinRoom(clientId: string, roomId: string) {
+  async joinRoom(clientId: string, roomId: string): Promise<boolean> {
     const client = this.clients.get(clientId);
     if (!client) return false;
     const room = await this.getRoom(roomId);
@@ -128,9 +128,10 @@ export class ClusterManager extends BaseManager<Agent> {
     this.logger.info('[cluster] join room', clientId, roomId);
     client.rooms.set(room.id, room);
     room.clients.set(client.id, client);
+    return true;
   }
 
-  async exitRoom(clientId: string, roomId: string) {
+  async exitRoom(clientId: string, roomId: string): Promise<void> {
     const client = this.clients.get(clientId);
     this.logger.info('[cluster] exit room', clientId, roomId, !!client);
     if (client) {
