@@ -7,6 +7,9 @@ export default (app: any) => {
       adminKey: 'egg-ez-ws-admin@',
     },
     customLogger: {
+      BaseManager: {
+        file: path.join(app.root, `logs/ez-ws/base-manager.log`),
+      },
       ClusterManager: {
         file: path.join(app.root, `logs/ez-ws/cluster-manager.log`),
       },

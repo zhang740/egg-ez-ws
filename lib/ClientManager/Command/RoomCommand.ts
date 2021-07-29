@@ -108,23 +108,24 @@ export class RoomInfoCommandProcessor extends BaseCommandProcessor {
       RoomInfoResponseEvent
     );
 
-    if (!info) {
-      return;
-    }
-
-    if (!client.isAdmin && (info.data.clients || []).every(c => c.id !== client.id)) {
-      return;
-    }
-
     const response: RoomCommandResponse = {
       type: 'ROOM_INFO',
-      success: true,
-      data: {
+      success: false,
+      data: {},
+    };
+
+    if (!info || !info.data) {
+      response.data = { err: 'NOT_FOUND_ROOM' };
+    } else if (!client.isAdmin && (info.data.clients || []).every(c => c.id !== client.id)) {
+      response.data = { err: 'FORBIDDEN' };
+    } else {
+      response.success = true;
+      response.data = {
         id: info.data.id,
         info: info.data.info,
         clients: info.data.clients.map(c => ({ id: c.id, info: c.info })),
-      },
-    };
+      };
+    }
 
     client.sendMessage(response, evt.evtId);
   }

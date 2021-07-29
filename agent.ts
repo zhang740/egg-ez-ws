@@ -23,6 +23,7 @@ export default (agent: Agent) => {
   (agent as any).iocContext = new IocContext();
 
   agent.beforeStart(() => {
+    agent.logger.info('[egg-ez-ws] agent init...');
     const clusterManager = getInstance(ClusterManager, agent, undefined);
 
     // 注册默认事件处理器
@@ -38,11 +39,15 @@ export default (agent: Agent) => {
     clusterManager.registerEventHandler(ClientMergeInfoHandler);
 
     clusterManager.onSendTo.addHandler(evt => {
+      agent.logger.debug('[egg-ez-ws] agent onSendTo', evt.type, evt.id);
       agent.messenger.sendToApp(MESSAGE_EVENT, evt);
     });
 
     agent.messenger.on(MESSAGE_EVENT, evt => {
+      agent.logger.debug('[egg-ez-ws] agent on MESSAGE_EVENT', evt.type, evt.id);
       clusterManager.eventProcess(evt);
     });
+
+    agent.logger.info('[egg-ez-ws] agent init ok');
   });
 };
