@@ -1,5 +1,10 @@
 // WORKER TO AGENT
-import { BaseEvent } from '../common/BaseEvent';
+import { BaseEvent } from '../common';
+
+/** 为了 async/await 的空回调事件 */
+export class NoopEvent extends BaseEvent {
+  evtType: string;
+}
 
 /** 客户端连接 */
 export class ClientConnectEvent extends BaseEvent<{ id: string }> {}

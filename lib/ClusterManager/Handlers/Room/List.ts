@@ -6,6 +6,6 @@ export class RoomListHandler extends BaseEventHandler<WORKER_TO_AGENT.RoomListRe
   eventType = WORKER_TO_AGENT.RoomListRequestEvent;
 
   async processor(evt: WORKER_TO_AGENT.RoomListRequestEvent) {
-    return new RoomListInfoResponseEvent([...(await this.manager.getRoomIds())], evt.id);
+    return new RoomListInfoResponseEvent([...(await this.manager.getRoomIds())], evt.id, evt.pid);
   }
 }

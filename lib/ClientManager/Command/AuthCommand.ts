@@ -36,7 +36,7 @@ export class AuthCommandProcessor extends BaseCommandProcessor {
       response.data.isAuthorized = true;
 
       if (msg.info) {
-        this.manager.onSendTo.emit(
+        await this.manager.broadcast(
           new MergeClientInfoEvent({ id: client.id, ext: { info: msg.info } })
         );
       }

@@ -4,9 +4,13 @@ import * as WebSocket from 'ws';
 import { Client, IMessage } from './Client';
 import { BaseCommandProcessor } from './Command';
 import { Application } from 'egg';
-import { ClientDisconnectEvent, ClientConnectEvent, ClientInfoRequestEvent } from '../contract/W_A';
+import {
+  ClientDisconnectEvent,
+  ClientConnectEvent,
+  ClientInfoRequestEvent,
+  NoopEvent,
+} from '../contract/W_A';
 import { BaseEventHandler } from './Handlers/BaseEventHandler';
-import { ClientMessageEvent } from '../contract/Any';
 import { BaseEvent } from '../common';
 import { ClassType, IClientInfo } from '../contract';
 import { EventDelegate } from '../util/EventDelegate';
@@ -24,7 +28,7 @@ export class ClientManager extends BaseManager<Application> {
       client.ws.ping('', undefined, err => {
         if (err) {
           this.logger.warn(client.id, 'ping fail!', err);
-          client.ws.close();
+          client.ws.terminate();
         }
       })
     );
@@ -112,12 +116,7 @@ export class ClientManager extends BaseManager<Application> {
     cbType?: T
   ): Promise<InstanceType<T> | void> {
     this.logger.debug('[client] broadcast', evt.type);
-    // Worker 内尝试直接分发，找不到则直接抛出
-    if (!cbType && evt instanceof ClientMessageEvent) {
-      this.eventProcess(evt);
-      return;
-    }
-    return super.broadcast(evt, cbType);
+    return super.broadcast(evt, cbType || (NoopEvent as any));
   }
 
   getClient(id: string) {

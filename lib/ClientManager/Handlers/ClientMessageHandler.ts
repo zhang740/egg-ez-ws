@@ -8,9 +8,7 @@ export class ClientMessageHandler extends BaseEventHandler<ANY.ClientMessageEven
     const client = this.manager.getClient(evt.data.clientId);
     if (client) {
       client.sendEvent(evt);
-    } else {
-      // Worker 内找不到则直接抛出，manager 中广播方法有处理会回到这里
-      this.manager.onSendTo.emit(evt);
     }
+    // 只处理当前 Worker 连接的客户端
   }
 }

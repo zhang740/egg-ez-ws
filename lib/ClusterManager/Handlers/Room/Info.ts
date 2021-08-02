@@ -14,17 +14,27 @@ export class RoomInfoHandler extends BaseEventHandler<WORKER_TO_AGENT.RoomInfoRe
             info: room.ext.info,
             data: room.ext.data,
             gmtCreated: room.ext.gmtCreated,
-            clients: [...room.clients.values()].map(c => {
-              return {
-                id: c.id,
-                info: c.ext.info,
-                data: c.ext.data,
-                gmtCreated: c.ext.gmtCreated,
-              } as IClientInfo;
-            }),
+            clients: (
+              await Promise.all(
+                room.clientIds.map(async cid => {
+                  const client = await this.manager.getClient(cid);
+                  if (!client) {
+                    this.manager.exitRoom(cid, room.id);
+                    return;
+                  }
+                  return {
+                    id: client.id,
+                    info: client.ext.info,
+                    data: client.ext.data,
+                    gmtCreated: client.ext.gmtCreated,
+                  } as IClientInfo;
+                })
+              )
+            ).filter(Boolean),
           }
         : null,
-      evt.id
+      evt.id,
+      evt.pid
     );
   }
 }

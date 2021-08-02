@@ -7,7 +7,7 @@ export abstract class BaseEvent<T = {}> {
   readonly id = uuid.v4();
   readonly timestamp = Date.now();
 
-  constructor(public readonly data: T, public readonly sourceId?: string) {}
+  constructor(public readonly data: T, public readonly sourceId?: string, public pid?: number) {}
 
   toJSON() {
     return {

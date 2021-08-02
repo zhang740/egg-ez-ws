@@ -1,6 +1,6 @@
 {
   "name": "egg-ez-ws",
-  "version": "0.1.12",
+  "version": "0.2.0",
   "description": "easy websocket for egg.",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
@@ -34,7 +34,7 @@
     "@ali/egg-typed": "^1.0.8",
     "@types/ws": "^6.0.4",
     "egg-aop": "^0.5.3",
-    "ws": "^7.2.0"
+    "ws": "^8.0.0"
   },
   "devDependencies": {
     "@types/mocha": "^5.2.7",

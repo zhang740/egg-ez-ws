@@ -17,6 +17,10 @@ export abstract class BaseManager<T extends EggApplication = EggApplication> {
 
   constructor(protected app: T) {}
 
+  log(type: 'debug' | 'info' | 'warn' | 'error', name: string, ...args: any[]) {
+    this.logger[type](`[${name}]`, ...args);
+  }
+
   async broadcast<T extends ClassType>(
     evt: BaseEvent,
     cbType?: T
@@ -57,8 +61,10 @@ export abstract class BaseManager<T extends EggApplication = EggApplication> {
         const handler = this.cbHandlers.get(evt.sourceId);
         if (handler) {
           handler(evt);
-          return;
+        } else {
+          this.logger.warn(`[${this.type}] eventProcess NOTFOUND callback!`, evt);
         }
+        return;
       }
 
       // 非 callback 则正常流程处理

@@ -1,5 +1,5 @@
 // ANY TO ANY
-import { BaseEvent } from '../common/BaseEvent';
+import { BaseEvent } from '../common';
 
 /** 调试专用 */
 export class DebugEvent extends BaseEvent {}

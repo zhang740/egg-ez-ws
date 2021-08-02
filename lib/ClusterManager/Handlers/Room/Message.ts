@@ -5,26 +5,24 @@ import { ClientMessageEvent } from '../../../contract/Any';
 export class RoomMessageHandler extends BaseEventHandler<RoomMessageEvent> {
   eventType = RoomMessageEvent;
 
-  async processor(evt: RoomMessageEvent): Promise<void> {
+  async processor(evt: RoomMessageEvent) {
     const room = await this.manager.getRoom(evt.data.roomId);
     if (!room) {
       return;
     }
-    room.clients.forEach(c => {
+    room.clientIds.forEach(cid => {
       // 不发送给自己
-      if (c.id === evt.data.fromId) {
+      if (cid === evt.data.fromId) {
         return;
       }
       this.manager.eventProcess(
-        new ClientMessageEvent(
-          {
-            fromId: evt.data.fromId,
-            clientId: c.id,
-            msg: evt.data.msg,
-          },
-          evt.id
-        )
+        new ClientMessageEvent({
+          fromId: evt.data.fromId,
+          clientId: cid,
+          msg: evt.data.msg,
+        })
       );
     });
+    return this.genNoopEvent(evt);
   }
 }

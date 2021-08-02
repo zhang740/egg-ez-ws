@@ -6,7 +6,7 @@ import { MESSAGE_EVENT } from './lib/contract';
 import { AuthCommandProcessor } from './lib/ClientManager/Command/AuthCommand';
 import { MessageCommandProcessor } from './lib/ClientManager/Command/MessageCommand';
 import { DebugCommandProcessor } from './lib/ClientManager/Command/DebugCommand';
-import { ClientMessageHandler } from './lib/ClientManager/Handlers/ClientMessage';
+import { ClientMessageHandler } from './lib/ClientManager/Handlers/ClientMessageHandler';
 import {
   RoomJoinCommandProcessor,
   RoomExitCommandProcessor,
@@ -30,6 +30,7 @@ export default (app: Application) => {
 
   clientManager.onSendTo.addHandler(evt => {
     app.logger.debug('[egg-ez-ws] app onSendTo', evt.type, evt.id);
+    evt.pid = process.pid;
     app.messenger.sendToAgent(MESSAGE_EVENT, evt);
   });
 

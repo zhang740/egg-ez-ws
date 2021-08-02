@@ -123,7 +123,12 @@ export class RoomInfoCommandProcessor extends BaseCommandProcessor {
       response.data = {
         id: info.data.id,
         info: info.data.info,
-        clients: info.data.clients.map(c => ({ id: c.id, info: c.info })),
+        clients: info.data.clients.map(c => {
+          return {
+            id: c.id,
+            info: c.info,
+          };
+        }),
       };
     }
 

@@ -13,6 +13,7 @@ export interface IMessage<T = any> {
 export class Client {
   readonly id = uuid.v4();
   isAuthorized: boolean = false;
+  isNode: boolean = false;
   isAdmin: boolean = false;
 
   constructor(public readonly ws: WebSocket) {}
