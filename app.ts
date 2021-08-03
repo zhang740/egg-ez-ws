@@ -29,13 +29,13 @@ export default (app: Application) => {
   clientManager.registerCommandProcessor(RoomInfoCommandProcessor);
 
   clientManager.onSendTo.addHandler(evt => {
-    app.logger.debug('[egg-ez-ws] app onSendTo', evt.type, evt.id);
+    app.logger.debug('[egg-ez-ws] app onSendTo', evt.type, evt.id, evt.pid);
     evt.pid = process.pid;
     app.messenger.sendToAgent(MESSAGE_EVENT, evt);
   });
 
   app.messenger.on(MESSAGE_EVENT, evt => {
-    app.logger.debug('[egg-ez-ws] app on MESSAGE_EVENT', evt.type, evt.id);
+    app.logger.debug('[egg-ez-ws] app on MESSAGE_EVENT', evt.type, evt.id, evt.pid);
     clientManager.eventProcess(evt);
   });
 

@@ -49,3 +49,8 @@ export class MergeRoomInfoEvent extends BaseEvent<{
   id: string;
   ext: { info?: any; data?: any };
 }> {}
+
+/** Worker 中不存在指定客户端 */
+export class NoClientEvent extends BaseEvent<{
+  clientId: string;
+}> {}

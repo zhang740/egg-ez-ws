@@ -1,6 +1,5 @@
 import { BaseEventHandler } from '../BaseEventHandler';
-import { WORKER_TO_AGENT } from '../../../contract';
-import { ClientInfoResponseEvent } from '../../../contract/A_W';
+import { WORKER_TO_AGENT, AGENT_TO_WORKER } from '../../../contract';
 
 export class ClientDisconnectHandler extends BaseEventHandler<WORKER_TO_AGENT.ClientDisconnectEvent> {
   eventType = WORKER_TO_AGENT.ClientDisconnectEvent;
@@ -8,7 +7,7 @@ export class ClientDisconnectHandler extends BaseEventHandler<WORKER_TO_AGENT.Cl
   async processor(evt: WORKER_TO_AGENT.ClientConnectEvent) {
     const client = await this.manager.getClient(evt.data.id);
     if (client) {
-      const newEvt = new ClientInfoResponseEvent(
+      const newEvt = new AGENT_TO_WORKER.ClientInfoResponseEvent(
         {
           id: client.id,
           info: client.ext.info,
@@ -17,8 +16,8 @@ export class ClientDisconnectHandler extends BaseEventHandler<WORKER_TO_AGENT.Cl
         },
         evt.id
       );
-      await this.manager.clientDisconnect(evt.data);
       return newEvt;
     }
+    await this.manager.clientDisconnect(evt.data.id);
   }
 }

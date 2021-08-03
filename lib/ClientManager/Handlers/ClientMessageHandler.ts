@@ -1,5 +1,5 @@
 import { BaseEventHandler } from './BaseEventHandler';
-import { ANY } from '../../contract';
+import { ANY, WORKER_TO_AGENT } from '../../contract';
 
 export class ClientMessageHandler extends BaseEventHandler<ANY.ClientMessageEvent> {
   eventType = ANY.ClientMessageEvent;
@@ -8,7 +8,13 @@ export class ClientMessageHandler extends BaseEventHandler<ANY.ClientMessageEven
     const client = this.manager.getClient(evt.data.clientId);
     if (client) {
       client.sendEvent(evt);
+    } else {
+      this.log('warn', '[ClientMessageHandler] NoClientEvent', evt.data.clientId);
+      this.manager.broadcast(
+        new WORKER_TO_AGENT.NoClientEvent({
+          clientId: evt.data.clientId,
+        })
+      );
     }
-    // 只处理当前 Worker 连接的客户端
   }
 }

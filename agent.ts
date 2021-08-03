@@ -16,6 +16,7 @@ import {
   ClientMessageHandler,
   ClientMergeInfoHandler,
   ClientInfoHandler,
+  NoClientHandler,
 } from './lib/ClusterManager/Handlers/Client';
 import { IDataSyncService, LocalDataSyncService } from './lib/DataSync';
 
@@ -37,12 +38,13 @@ export default (agent: Agent) => {
   clusterManager.registerEventHandler(RoomMessageHandler);
   clusterManager.registerEventHandler(ClientConnectHandler);
   clusterManager.registerEventHandler(ClientDisconnectHandler);
+  clusterManager.registerEventHandler(NoClientHandler);
   clusterManager.registerEventHandler(ClientInfoHandler);
   clusterManager.registerEventHandler(ClientMessageHandler);
   clusterManager.registerEventHandler(ClientMergeInfoHandler);
 
   clusterManager.onSendTo.addHandler(evt => {
-    agent.logger.debug('[egg-ez-ws] agent onSendTo', evt.type, evt.id);
+    agent.logger.debug('[egg-ez-ws] agent onSendTo', evt.type, evt.id, evt.pid);
     if (evt.pid) {
       agent.messenger.sendTo(evt.pid, MESSAGE_EVENT, evt);
     } else {
@@ -51,7 +53,7 @@ export default (agent: Agent) => {
   });
 
   agent.messenger.on(MESSAGE_EVENT, evt => {
-    agent.logger.debug('[egg-ez-ws] agent on MESSAGE_EVENT', evt.type, evt.id);
+    agent.logger.debug('[egg-ez-ws] agent on MESSAGE_EVENT', evt.type, evt.id, evt.pid);
     clusterManager.eventProcess(evt);
   });
 

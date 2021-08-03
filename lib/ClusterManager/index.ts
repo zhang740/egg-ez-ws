@@ -32,9 +32,9 @@ export class ClusterManager extends BaseManager<Agent> {
     return client;
   }
 
-  async clientDisconnect(info: IClientInfo) {
-    this.logger.debug('[cluster] client disconnect', info);
-    await this.dataSyncService.delClient(info.id);
+  async clientDisconnect(clientId: string) {
+    this.logger.debug('[cluster] client disconnect', clientId);
+    await this.dataSyncService.delClient(clientId);
   }
 
   async getClient(id: string) {

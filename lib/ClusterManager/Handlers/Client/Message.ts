@@ -12,6 +12,7 @@ export class ClientMessageHandler extends BaseEventHandler<ANY.ClientMessageEven
     }
     // 如果是当前服务节点的客户端，则通知 Workers
     if (client.nodeId === this.manager.nodeId) {
+      evt.pid = client.pid;
       this.manager.onSendTo.emit(evt);
     } else {
       this.log('debug', '[ClientMessageHandler] dataSyncService.sendTo', client.nodeId, evt);
