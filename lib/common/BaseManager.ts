@@ -54,7 +54,7 @@ export abstract class BaseManager<T extends EggApplication = EggApplication> {
 
   /** 事件处理 */
   async eventProcess(evt: BaseEvent) {
-    this.logger.debug(`[${this.type}] eventProcess`, evt);
+    this.logger.info(`[${this.type}] eventProcess`, evt.type);
     try {
       // callback 优先
       if (evt.sourceId) {

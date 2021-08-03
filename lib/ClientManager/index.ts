@@ -25,9 +25,9 @@ export class ClientManager extends BaseManager<Application> {
 
   readonly checkHeart = setInterval(() => {
     [...this.clients.values()].forEach(client =>
-      client.ws.ping('', undefined, err => {
+      client.ws.ping(JSON.stringify({ type: 'ping' }), undefined, err => {
         if (err) {
-          this.logger.warn(client.id, 'ping fail!', err);
+          this.logger.warn('[ping] fail!', client.id, err);
           client.ws.terminate();
         }
       })
@@ -69,7 +69,7 @@ export class ClientManager extends BaseManager<Application> {
         if (!msg) {
           return;
         }
-        this.logger.debug(
+        this.logger.info(
           '[client] ws onmessage',
           msg.type,
           client.id,
@@ -90,7 +90,7 @@ export class ClientManager extends BaseManager<Application> {
           }
         });
       } catch (error) {
-        this.logger.warn('[client] ws onmessage Err!', client.id, evt.data, error);
+        this.logger.error('[client] ws onmessage Err!', client.id, evt.data, error);
       }
     };
     ws.onerror = evt => {
