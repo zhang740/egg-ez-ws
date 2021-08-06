@@ -1,6 +1,6 @@
 {
   "name": "egg-ez-ws",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "easy websocket for egg.",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
@@ -65,7 +65,7 @@
     "clean": "rimraf app/**/*.js lib/**/*.js app/**/*.d.ts lib/**/*.d.ts",
     "ts": "npm run clean && tsc",
     "debug": "tsc -w -p tsconfig.debug.json",
-    "prepublish": "npm run test && npm run ts",
+    "prepublish": "npm run clean && npm run test && npm run ts",
     "postpublish": "node scripts/published.js"
   },
   "ci": {

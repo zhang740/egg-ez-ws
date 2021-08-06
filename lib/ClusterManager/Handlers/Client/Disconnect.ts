@@ -14,8 +14,10 @@ export class ClientDisconnectHandler extends BaseEventHandler<WORKER_TO_AGENT.Cl
           data: client.ext.data,
           roomIds: [...client.roomIds],
         },
-        evt.id
+        evt.id,
+        evt.pid
       );
+      await this.manager.clientDisconnect(evt.data.id);
       return newEvt;
     }
     await this.manager.clientDisconnect(evt.data.id);

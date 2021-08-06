@@ -5,6 +5,7 @@ export class NoClientHandler extends BaseEventHandler<WORKER_TO_AGENT.NoClientEv
   eventType = WORKER_TO_AGENT.NoClientEvent;
 
   async processor(evt: WORKER_TO_AGENT.NoClientEvent) {
-    this.manager.clientDisconnect(evt.data.clientId);
+    await this.manager.clientDisconnect(evt.data.clientId);
+    return this.genNoopEvent(evt);
   }
 }
