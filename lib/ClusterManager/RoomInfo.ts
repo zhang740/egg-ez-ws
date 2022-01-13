@@ -16,5 +16,6 @@ export class RoomInfo {
     this.id = info.id || uuid.v4();
     this.ext.info = info.info || {};
     this.ext.data = info.data || {};
+    this.ext.gmtCreated = info.gmtCreated || Date.now();
   }
 }
