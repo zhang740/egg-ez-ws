@@ -1,7 +1,7 @@
 import { Agent } from 'egg';
 import { application, lazyInject } from 'egg-aop';
 import { IRoomInfo, IClientInfo } from '../contract';
-import { BaseEventHandler } from './handlers/BaseEventHandler';
+import { BaseEventHandler } from './Handlers/BaseEventHandler';
 import { BaseManager } from '../common';
 import { IDataSyncService } from '../DataSync';
 import { RoomInfo } from './RoomInfo';
